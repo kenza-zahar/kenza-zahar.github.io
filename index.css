@@ -47,7 +47,7 @@
 
     --gutter-huge: 12rem;
     --gutter-medium: 6rem;
-    --gutter-normal: 3rem;
+    --: 3rem;
     --gutter-small-1: 2.5rem;
     --gutter-small: 2rem;
 
@@ -95,7 +95,7 @@ body {
 
 @media(max-width: 600px) {
     .row {
-        padding: 0 var(--gutter-normal);
+        padding: 0 var(--);
     }
 }
 
@@ -338,7 +338,7 @@ body:not(.user-is-tabbing) a:focus {
 .nav {
     display: flex;
     justify-content: flex-end;
-    padding: var(--gutter-normal) 0;
+    padding: var(--) 0;
 }
 
 .nav__items {
@@ -358,7 +358,7 @@ body:not(.user-is-tabbing) a:focus {
 
 @media(max-width: 400px) {
     .nav__item:not(:last-child) {
-        margin-right: var(--gutter-normal);
+        margin-right: var(--);
     }
 }
 
@@ -468,19 +468,19 @@ body:not(.user-is-tabbing) a:focus {
 }
 
 .work__text {
-    flex: 0 0 50%;
+    flex: 0 0 100%;
 }
 
 .work__list {
     /* list-style-type: square; */
     list-style-position: inside;
-    margin-bottom: var(--gutter-normal);
+    margin-bottom: var(--);
 }
 
 .work__code {
     display: block;
     height: 3rem;
-    margin-left: var(--gutter-normal);
+    margin-left: var(--);
     transition: all .3s;
 }
 
@@ -489,7 +489,7 @@ body:not(.user-is-tabbing) a:focus {
 }
 
 .work__image-box {
-    margin-bottom: var(--gutter-normal);
+    margin-bottom: var(--);
 }
 
 @media(min-width: 901px) {
@@ -523,7 +523,7 @@ body:not(.user-is-tabbing) a:focus {
 @media(max-width: 1240px) {
     .client__logos {
         overflow-x: scroll;
-        padding: var(--gutter-normal);
+        padding: var(--);
     }
 
     .client__logo:not(:last-of-type) {
@@ -549,7 +549,7 @@ body:not(.user-is-tabbing) a:focus {
 }
 
 .about__photo-container {
-    margin-bottom: var(--gutter-normal);
+    margin-bottom: var(--);
 }
 
 @media(min-width: 901px) {
@@ -577,13 +577,13 @@ body:not(.user-is-tabbing) a:focus {
 
 .footer {
     text-align: center;
-    padding: var(--gutter-medium) 0 var(--gutter-normal);
+    padding: var(--gutter-medium) 0 var(--);
 }
 
 .footer__social-links {
     display: flex;
     justify-content: center;
-    padding: var(--gutter-normal) 0;
+    padding: var(--) 0;
     list-style: none;
 }
 
