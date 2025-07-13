@@ -511,6 +511,7 @@ body:not(.user-is-tabbing) a:focus {
 /* ----- realisation----- */
 /* --------------------------------------- */
 
+/*
 .realisation__box {
     display: flex;
     align-items: center;
@@ -543,7 +544,6 @@ body:not(.user-is-tabbing) a:focus {
 }
 
 .realisation__list {
-    /* list-style-type: square; */
     list-style-position: inside;
     margin-bottom: var(--);
 }
@@ -576,12 +576,13 @@ body:not(.user-is-tabbing) a:focus {
     }
 }
 
-
+*/
 
 /* --------------------------------------- */
 /* ----- carriere----- */
 /* --------------------------------------- */
 
+/*
 .carriere__box {
     display: flex;
     align-items: center;
@@ -614,7 +615,6 @@ body:not(.user-is-tabbing) a:focus {
 }
 
 .carriere__list {
-    /* list-style-type: square; */
     list-style-position: inside;
     margin-bottom: var(--);
 }
@@ -647,6 +647,8 @@ body:not(.user-is-tabbing) a:focus {
     }
 }
 
+
+*/
 /* --------------------------------------- */
 /* ----- About ----- */
 /* --------------------------------------- */
