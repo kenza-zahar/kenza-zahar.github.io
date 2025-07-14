@@ -678,7 +678,7 @@ body:not(.user-is-tabbing) a:focus {
     
     .about__photo-container {
         flex: 1;
-        margin: 0 0 0 10rem;
+        margin: 0 0 0;
     }
 }
 
