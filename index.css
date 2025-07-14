@@ -667,7 +667,7 @@ body:not(.user-is-tabbing) a:focus {
 }
 
 .about__photo-container {
-    margin-bottom: var(--);
+    margin-bottom: var(--gutter-normal);
 }
 
 @media(min-width: 901px) {
