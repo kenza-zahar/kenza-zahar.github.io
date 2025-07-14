@@ -611,7 +611,7 @@ body:not(.user-is-tabbing) a:focus {
 }
 
 .carriere__text {
-    flex: 0 0 50%;
+    flex: 0 0 100%;
 }
 
 .carriere__list {
