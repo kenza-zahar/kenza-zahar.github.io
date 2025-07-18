@@ -672,7 +672,7 @@ body:not(.user-is-tabbing) a:focus {
 
 @media(min-width: 901px) {
     .about__text {
-        flex: 0 0 100%;
+        flex: 0 0 30%;
     }
     
     .about__photo-container {
