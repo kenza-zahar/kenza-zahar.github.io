@@ -468,7 +468,8 @@ body:not(.user-is-tabbing) a:focus {
 }
 
 .work__text {
-    flex: 0 0 50%;
+    flex: 1;
+    max-width: 65%;
 }
 
 .work__list {
@@ -489,7 +490,7 @@ body:not(.user-is-tabbing) a:focus {
 }
 
 .work__image-box {
-    margin-bottom: var(--);
+    flex: 1;
 }
 
 @media(min-width: 901px) {
