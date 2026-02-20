@@ -489,6 +489,10 @@ body:not(.user-is-tabbing) a:focus {
     transform: scale(1.2);
 }
 
+.work__image {
+  image-rendering: auto;
+}
+
 .work__image-box {
     flex: 1;
 }
