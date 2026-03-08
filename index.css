@@ -734,3 +734,404 @@ body:not(.user-is-tabbing) a:focus {
         padding: var(--gutter-medium) 0;
     } 
 }
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Demo — Pop-up Email | Kenza ZAHAR</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+
+  <style>
+    /* ── Demo page reset ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: #0d0d0d;
+      color: #f0ece6;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .demo-btn {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.9rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      background: transparent;
+      border: 1.5px solid #e07b6b;
+      color: #e07b6b;
+      padding: 14px 38px;
+      cursor: pointer;
+      transition: background 0.25s, color 0.25s;
+      border-radius: 2px;
+    }
+    .demo-btn:hover { background: #e07b6b; color: #0d0d0d; }
+
+    /* ════════════════════════════════
+       OVERLAY
+    ════════════════════════════════ */
+    .mail-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(10, 10, 10, 0.82);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      z-index: 9000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.35s ease;
+    }
+    .mail-overlay.is-open {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    /* ════════════════════════════════
+       MODAL
+    ════════════════════════════════ */
+    .mail-modal {
+      position: relative;
+      width: min(560px, 94vw);
+      background: #141414;
+      border: 1px solid rgba(224, 123, 107, 0.25);
+      border-radius: 4px;
+      padding: 52px 48px 44px;
+      transform: translateY(28px) scale(0.97);
+      transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.35s ease;
+      opacity: 0;
+    }
+    .mail-overlay.is-open .mail-modal {
+      transform: translateY(0) scale(1);
+      opacity: 1;
+    }
+
+    /* Accent line top */
+    .mail-modal::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 48px; right: 48px;
+      height: 2px;
+      background: linear-gradient(90deg, #e07b6b, #c4556a);
+    }
+
+    /* Close */
+    .mail-close {
+      position: absolute;
+      top: 18px; right: 20px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: rgba(240, 236, 230, 0.4);
+      font-size: 1.5rem;
+      line-height: 1;
+      padding: 4px 8px;
+      transition: color 0.2s;
+    }
+    .mail-close:hover { color: #e07b6b; }
+
+    /* Heading */
+    .mail-modal h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 300;
+      font-size: 2rem;
+      letter-spacing: 0.04em;
+      color: #f0ece6;
+      margin-bottom: 6px;
+    }
+    .mail-modal p.sub {
+      font-size: 0.82rem;
+      letter-spacing: 0.08em;
+      color: rgba(240, 236, 230, 0.45);
+      text-transform: uppercase;
+      margin-bottom: 36px;
+    }
+
+    /* Form */
+    .mail-form { display: flex; flex-direction: column; gap: 20px; }
+
+    .mail-field {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+    .mail-field label {
+      font-size: 0.75rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: rgba(240, 236, 230, 0.5);
+    }
+    .mail-field input,
+    .mail-field textarea {
+      background: #1e1e1e;
+      border: 1px solid rgba(240, 236, 230, 0.12);
+      border-radius: 3px;
+      color: #f0ece6;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.92rem;
+      padding: 12px 16px;
+      outline: none;
+      transition: border-color 0.2s;
+      resize: none;
+    }
+    .mail-field input:focus,
+    .mail-field textarea:focus {
+      border-color: rgba(224, 123, 107, 0.6);
+    }
+    .mail-field textarea { height: 110px; }
+
+    /* Row: name + email */
+    .mail-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+    /* Submit */
+    .mail-submit {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.85rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      background: linear-gradient(135deg, #e07b6b, #c4556a);
+      border: none;
+      color: #fff;
+      padding: 15px 0;
+      border-radius: 3px;
+      cursor: pointer;
+      margin-top: 4px;
+      transition: opacity 0.2s, transform 0.15s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+    .mail-submit:hover { opacity: 0.88; transform: translateY(-1px); }
+    .mail-submit:active { transform: translateY(0); }
+
+    /* Spinner */
+    .spinner {
+      width: 16px; height: 16px;
+      border: 2px solid rgba(255,255,255,0.3);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      display: none;
+    }
+    .mail-submit.loading .spinner { display: block; }
+    .mail-submit.loading .btn-label { display: none; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Success */
+    .mail-success {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 18px;
+      padding: 24px 0 8px;
+      text-align: center;
+    }
+    .mail-success.show { display: flex; }
+    .mail-form.hide { display: none; }
+
+    .success-icon {
+      width: 56px; height: 56px;
+      border-radius: 50%;
+      background: rgba(224, 123, 107, 0.15);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.6rem;
+    }
+    .mail-success h3 {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 300;
+      font-size: 1.5rem;
+      color: #f0ece6;
+    }
+    .mail-success p {
+      font-size: 0.88rem;
+      color: rgba(240, 236, 230, 0.5);
+      max-width: 320px;
+      line-height: 1.6;
+    }
+
+    /* Error message */
+    .mail-error {
+      font-size: 0.78rem;
+      color: #e07b6b;
+      display: none;
+      margin-top: -8px;
+    }
+    .mail-error.show { display: block; }
+
+    /* ── Responsive ── */
+    @media (max-width: 500px) {
+      .mail-modal { padding: 44px 26px 36px; }
+      .mail-row { grid-template-columns: 1fr; }
+      .mail-modal::before { left: 26px; right: 26px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Demo trigger -->
+  <button class="demo-btn" id="openMailPopup">✉ Me contacter</button>
+
+  <!-- ═══════════════════════════════════════
+       MAIL POPUP — copier ce bloc dans index.html
+  ═══════════════════════════════════════ -->
+  <div class="mail-overlay" id="mailOverlay" role="dialog" aria-modal="true" aria-labelledby="mailTitle">
+    <div class="mail-modal">
+
+      <button class="mail-close" id="mailClose" aria-label="Fermer">&#215;</button>
+
+      <h2 id="mailTitle">Écrivez-moi</h2>
+      <p class="sub">Disponible pour de nouveaux projets</p>
+
+      <!-- Success state -->
+      <div class="mail-success" id="mailSuccess">
+        <div class="success-icon">✓</div>
+        <h3>Message envoyé !</h3>
+        <p>Merci pour votre message. Je vous répondrai dans les meilleurs délais.</p>
+      </div>
+
+      <!-- Form -->
+      <form class="mail-form" id="mailForm" novalidate>
+        <div class="mail-row">
+          <div class="mail-field">
+            <label for="mailName">Nom</label>
+            <input type="text" id="mailName" placeholder="Votre nom" autocomplete="name" />
+          </div>
+          <div class="mail-field">
+            <label for="mailEmail">Email</label>
+            <input type="email" id="mailEmail" placeholder="votre@email.com" autocomplete="email" />
+            <span class="mail-error" id="emailError">Adresse e-mail invalide.</span>
+          </div>
+        </div>
+        <div class="mail-field">
+          <label for="mailSubject">Sujet</label>
+          <input type="text" id="mailSubject" placeholder="Objet du message" />
+        </div>
+        <div class="mail-field">
+          <label for="mailMessage">Message</label>
+          <textarea id="mailMessage" placeholder="Décrivez votre projet ou votre demande…"></textarea>
+          <span class="mail-error" id="msgError">Le message ne peut pas être vide.</span>
+        </div>
+        <button type="submit" class="mail-submit" id="mailSubmit">
+          <span class="btn-label">Envoyer le message</span>
+          <span class="spinner"></span>
+        </button>
+      </form>
+
+    </div>
+  </div>
+  <!-- ═══════════════════════════════════════ END MAIL POPUP ═══ -->
+
+
+  <script>
+    /* ──────────────────────────────────────────────────────
+       Configuration — remplacer par votre email
+    ────────────────────────────────────────────────────── */
+    const RECIPIENT = 'zahar.kenza6565@gmail.com';
+
+    /* ──────────────────────────────────────────────────────
+       Sélecteurs
+    ────────────────────────────────────────────────────── */
+    const overlay   = document.getElementById('mailOverlay');
+    const form      = document.getElementById('mailForm');
+    const success   = document.getElementById('mailSuccess');
+    const submitBtn = document.getElementById('mailSubmit');
+    const emailErr  = document.getElementById('emailError');
+    const msgErr    = document.getElementById('msgError');
+
+    /* ── Ouvrir ── */
+    function openMailPopup() {
+      overlay.classList.add('is-open');
+      document.body.style.overflow = 'hidden';
+      document.getElementById('mailName').focus();
+    }
+
+    /* ── Fermer ── */
+    function closeMailPopup() {
+      overlay.classList.remove('is-open');
+      document.body.style.overflow = '';
+      // Reset après l'animation
+      setTimeout(() => {
+        form.classList.remove('hide');
+        success.classList.remove('show');
+        submitBtn.classList.remove('loading');
+        form.reset();
+        emailErr.classList.remove('show');
+        msgErr.classList.remove('show');
+      }, 380);
+    }
+
+    /* ── Listeners ── */
+    document.getElementById('openMailPopup').addEventListener('click', openMailPopup);
+    document.getElementById('mailClose').addEventListener('click', closeMailPopup);
+    overlay.addEventListener('click', e => { if (e.target === overlay) closeMailPopup(); });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeMailPopup(); });
+
+    /* ── Validation ── */
+    function isValidEmail(v) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v); }
+
+    /* ── Soumission ── */
+    form.addEventListener('submit', async e => {
+      e.preventDefault();
+      let valid = true;
+
+      const email   = document.getElementById('mailEmail').value.trim();
+      const message = document.getElementById('mailMessage').value.trim();
+
+      emailErr.classList.toggle('show', !isValidEmail(email)); if (!isValidEmail(email)) valid = false;
+      msgErr.classList.toggle('show', !message);               if (!message) valid = false;
+
+      if (!valid) return;
+
+      // Afficher le spinner
+      submitBtn.classList.add('loading');
+
+      // ── Option A : mailto (fonctionne sans serveur) ──
+      // On construit un lien mailto et on l'ouvre silencieusement.
+      const name    = document.getElementById('mailName').value.trim();
+      const subject = encodeURIComponent(document.getElementById('mailSubject').value.trim() || 'Contact depuis le portfolio');
+      const body    = encodeURIComponent(
+        `Nom : ${name}\nEmail : ${email}\n\n${message}`
+      );
+      const mailtoLink = `mailto:${RECIPIENT}?subject=${subject}&body=${body}`;
+
+      // Simuler un court délai pour l'UX puis ouvrir le client mail
+      await new Promise(r => setTimeout(r, 900));
+      window.location.href = mailtoLink;
+
+      // Afficher le succès
+      submitBtn.classList.remove('loading');
+      form.classList.add('hide');
+      success.classList.add('show');
+
+      // Fermer automatiquement après 4 secondes
+      setTimeout(closeMailPopup, 4000);
+    });
+
+    /* ──────────────────────────────────────────────────────
+       INSTRUCTIONS D'INTÉGRATION DANS index.html
+       ──────────────────────────────────────────────────────
+       1. Copier le bloc <style> dans le <head> de index.html
+          (ou dans index.css)
+       2. Copier le bloc <div class="mail-overlay"…> juste
+          avant la balise </body> de index.html
+       3. Copier le bloc <script> en bas de index.html
+          (avant </body>), APRÈS index.js
+       4. Sur le bouton "Get in touch" du header et le bouton
+          "zahar.kenza6565@gmail.com" dans la section contact,
+          remplacer href="#contact" / href="mailto:…" par :
+            onclick="openMailPopup(); return false;"
+          et ajouter id="openMailPopup" au(x) bouton(s)
+          (ou appeler openMailPopup() depuis index.js)
+    ────────────────────────────────────────────────────── */
+  </script>
+</body>
+</html>
